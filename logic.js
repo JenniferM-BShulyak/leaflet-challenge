@@ -4,15 +4,35 @@ var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_da
 // Perform a GET request to the query URL/
 d3.json(queryUrl).then(function (data) {
   // Once we get a response, send the data.features object to the createFeatures function.
-  createFeatures(data.features);
+  let dataPoints = data.features;
+  console.log(JSON.stringify(dataPoints[0]));
+
+  var markers =[];
+  // Loop through locations, and create the city and state markers.
+  for (var i = 0; i < dataPoints.length; i++) {
+    // Setting the marker radius for the state by passing population into the markerSize function
+    markers.push(
+      L.circle(dataPoints[i].geometry.coordinates, {
+        stroke: false,
+        fillOpacity: 0.75,
+        color: "white",
+        fillColor: "white",
+        radius: dataPoints[i].properties.mag
+      })
+    )};
+  console.log(markers[0]);
+
+  createFeatures(data.features, markers);
+
 });
 
-function createFeatures(earthquakeData) {
+
+function createFeatures(earthquakeData, markers) {
 
   // Define a function that we want to run once for each feature in the features array.
   // Give each feature a popup that describes the place and time of the earthquake.
   function onEachFeature(feature, layer) {
-    layer.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>${new Date(feature.properties.time)}</p>`);
+    layer.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>Date: ${new Date(feature.properties.time)}</p><hr><p>Magnitude:${(feature.properties.mag)}</p>`);
   }
 
   // Create a GeoJSON layer that contains the features array on the earthquakeData object.
@@ -22,10 +42,10 @@ function createFeatures(earthquakeData) {
   });
 
   // Send our earthquakes layer to the createMap function/
-  createMap(earthquakes);
+  createMap(earthquakes, markers);
 }
 
-function createMap(earthquakes) {
+function createMap(earthquakes, markers) {
 
   // Create the base layers.
   var street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -36,6 +56,9 @@ function createMap(earthquakes) {
     attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
   });
 
+  //Create Layer for Markers
+  var markerCircles = L.layerGroup(markers);
+
   // Create a baseMaps object.
   var baseMaps = {
     "Street Map": street,
@@ -44,7 +67,8 @@ function createMap(earthquakes) {
 
   // Create an overlay object to hold our overlay.
   var overlayMaps = {
-    Earthquakes: earthquakes
+    Earthquakes: earthquakes,
+    "magnitude": markerCircles
   };
 
   // Create our map, giving it the streetmap and earthquakes layers to display on load.
@@ -64,3 +88,5 @@ function createMap(earthquakes) {
   }).addTo(myMap);
 
 }
+
+
