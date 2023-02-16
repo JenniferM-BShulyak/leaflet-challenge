@@ -98,49 +98,27 @@ function createMap(earthquakes) {
     collapsed: false
   }).addTo(myMap);
   
-  
-  
- 
+
   // Set up the legend.
   var legend = L.control({ position: "bottomright" });
   legend.onAdd = function() {
     var div = L.DomUtil.create("div", "info legend");
     var limits = ['-10-10','10-30','30-50','50-70','70-90', '>90'];
     var colors = ["red", "orange", "yellow", "green", "blue", "purple"];
+    var l = [];
     var labels = [];
-  // loop through our density intervals and generate a label with a colored square for each interval
-    for (var i = 0; i < grades.length; i++) {
-      div.innerHTML +=
-        '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
-        grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
-    }
+    
 
+    limits.forEach(function(limit, index) {
+        labels.push("<li style=\"background-color: "+ colors[index] + "\">"+ limits[index]+"</li>");
+        //l.push('<i style="background: ' + limits[index] + '"></i> ');
+      });
+  
+    div.innerHTML += "<ul>" + labels.join("") + "</ul>";
+  
     return div;
   };
-  // Adding the legend to the map
   legend.addTo(myMap);
-
-  //   // Add the minimum and maximum.
-  //   var legendInfo = "<h1>Depth of Earthquake</h1>" +
-  //       "<div class=\"labels\">" +
-  //         "<div class=\"min\">" + limits[0] + "</div>" +
-  //         "<div>" + limits[1] + "</div>" +
-  //         "<div>" + limits[2] + "</div>" +
-  //         "<div>" + limits[3] + "</div>" +
-  //         "<div>" + limits[4] + "</div>" +
-  //         "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
-  //       "</div>";
-  
-  //   div.innerHTML = legendInfo;
-  
-  //   limits.forEach(function(limit, index) {
-  //       labels.push("<li style=\"background-color: " + colors[index] + "\"></li>");
-  //     });
-  
-  //   div.innerHTML += "<ul>" + labels.join("") + "</ul>";
-  //   return div;
-  // };
-  
   
 };
 

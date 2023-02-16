@@ -19,7 +19,6 @@ html {
   box-shadow: 0 0 15px rgba(0,0,0,0.2);
   border-radius: 5px;
 }
-
 .legend ul {
   list-style-type: none;
   padding: 0;
@@ -27,15 +26,16 @@ html {
   clear: both;
 }
 .legend li {
-  display: inline-block;
+
   width: 90px;
-  height: 22px;
+  height: 25px;
 }
 
-.legend .labels {
-  float: inline-block;
-}
 
 h1 {
   text-align: center;
+}
+
+.legend .labels {
+  float: Right;
 }
